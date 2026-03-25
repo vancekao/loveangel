@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>愛天使網站後台</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div id="loginView" class="login-wrap">
+    <div class="glass login-card">
+      <div class="badge">網站後台登入</div>
+      <h1 style="font-size:40px">愛天使網站後台</h1>
+      <p>可管理前台主要內容，包含首頁、特教專區、最新消息、活動、攤位、贊助與聯絡資訊。</p>
+      <form id="loginForm" class="form-grid">
+        <input id="loginPassword" class="input" type="password" placeholder="請輸入管理密碼" required />
+        <button class="btn btn-primary" type="submit">登入後台</button>
+      </form>
+      <p class="muted">預設密碼：admin1234</p>
+    </div>
+  </div>
+  <div id="adminView" class="admin-shell" style="display:none">
+    <aside class="admin-sidebar">
+      <a class="brand" href="index.html"><span class="brand-icon"><img id="siteLogoImage" class="brand-logo-image site-logo-image" src="" alt="網站 Logo" style="display:none"><span id="siteLogoFallback" class="site-logo-fallback">❤</span></span><span>愛天使後台</span></a>
+      <div style="margin-top:14px">
+        <span class="status-badge">網站管理版</span>
+        <p class="muted">最後更新：<span id="lastUpdated">-</span></p>
+      </div>
+      <div class="admin-nav" id="adminNav"></div>
+    </aside>
+    <main class="admin-content">
+      <div class="admin-toolbar">
+        <div class="toolbar-left">
+          <button id="saveAll" class="btn btn-primary">儲存全部變更</button>
+          <button id="previewSite" class="btn btn-secondary">預覽前台</button>
+          <button id="resetSite" class="btn btn-soft">還原預設</button>
+        </div>
+        <div class="toolbar-right">
+          <label class="btn btn-soft" for="importJson">匯入 JSON</label>
+          <input id="importJson" type="file" accept="application/json" hidden />
+          <button id="exportJson" class="btn btn-soft">匯出 JSON</button>
+          <button id="logoutBtn" class="btn btn-secondary">登出</button>
+        </div>
+      </div>
+
+      <section id="panel-site" class="admin-panel active panel">
+        <div class="section-head"><div><h2 class="section-title">網站基本設定</h2><p class="section-subtitle">首頁主視覺、按鈕與品牌設定。</p></div></div>
+        <div class="editor-grid">
+          <div class="row-2">
+            <label>網站名稱<input id="siteNameInput" class="input" /></label>
+            <label>品牌標語<input id="siteTaglineInput" class="input" /></label>
+          </div>
+          <div class="row-2">
+            <label>首頁網站名稱字型
+              <select id="siteNameFontFamilyInput" class="input">
+                <option value="'Noto Sans TC', 'Microsoft JhengHei', sans-serif">思源黑體 / 黑體風格</option>
+                <option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option>
+                <option value="'PingFang TC', 'Microsoft JhengHei', sans-serif">蘋方</option>
+                <option value="'DFKai-SB', 'BiauKai', serif">標楷體</option>
+                <option value="serif">襯線字體</option>
+                <option value="sans-serif">無襯線字體</option>
+              </select>
+            </label>
+            <label>首頁網站名稱字體大小（px）<input id="siteNameFontSizeInput" class="input" type="number" min="12" max="96" step="1" /></label>
+          </div>
+          <label>網站 Logo 圖片路徑或 base64<input id="siteLogoInput" class="input" /></label>
+          <label>上傳網站 Logo<input id="siteLogoFile" class="input" type="file" accept="image/*" /></label>
+          <div class="image-preview" id="siteLogoPreviewWrap" style="display:none"><img id="siteLogoPreview" src="" alt="網站 Logo 預覽"></div>
+          <label>Hero 主標題<input id="heroTitleInput" class="input" /></label>
+          <label>Hero 副標題<textarea id="heroSubtitleInput" class="input"></textarea></label>
+          <div class="row-2">
+            <label>活動日期<input id="heroDateInput" class="input" /></label>
+            <label>活動地點<input id="heroLocationInput" class="input" /></label>
+          </div>
+          <label>主視覺圖片路徑或 base64<input id="heroImageInput" class="input" /></label>
+          <label>上傳主視覺圖片<input id="heroImageFile" class="input" type="file" accept="image/*" /></label>
+          <div class="image-preview" id="heroImagePreviewWrap" style="display:none"><img id="heroImagePreview" src="" alt="主視覺預覽"></div>
+
+          <div>
+            <div class="section-head"><div><h3>首頁主按鈕</h3><p class="section-subtitle">可新增、移除、上傳按鈕圖片並設定超連結，也可調整順序。</p></div><button id="addHeroButton" type="button" class="btn btn-soft">新增按鈕</button></div>
+            <div id="heroButtonsEditor" class="stack-list"></div>
+          </div>
+
+          <div>
+            <div class="section-head"><div><h3>本次園遊會資訊</h3><p class="section-subtitle">可新增、移除資訊卡，並設定圖片與超連結，也可調整順序。</p></div><button id="addHeroInfoItem" type="button" class="btn btn-soft">新增資訊卡</button></div>
+            <div id="heroInfoEditor" class="stack-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-home" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">首頁內容</h2><p class="section-subtitle">首頁簡介、輪播圖片、統計卡與特色區塊。每一筆都可放連結、圖片、隱藏，並可調整順序。</p></div></div>
+        <div class="editor-grid">
+          <label>首頁標題<input id="homeIntroTitleInput" class="input" /></label>
+          <label>首頁說明<textarea id="homeIntroTextInput" class="input"></textarea></label>
+          <div>
+            <div class="section-head"><div><h3>首頁輪播區</h3><p class="section-subtitle">可新增輪播圖片、設定點擊連結、上傳圖片，並可直接貼上 YouTube 影片連結與勾選隱藏。</p></div><button id="addCarouselSlide" class="small-btn">新增輪播</button></div>
+            <div class="row-2">
+              <label>輪播標題<input id="carouselTitleInput" class="input" /></label>
+              <label>輪播說明<input id="carouselSubtitleInput" class="input" /></label>
+            </div>
+            <div id="carouselEditor" class="list-editor"></div>
+          </div>
+          <div><div class="section-head"><h3>首頁統計卡</h3><button id="addStat" class="small-btn">新增統計</button></div><div id="statsEditor" class="list-editor"></div></div>
+          <div><div class="section-head"><div><h3>首頁特色區塊</h3><p class="section-subtitle">活動與媒體露出區塊可上傳圖片，或改貼 YouTube 影片連結。</p></div><button id="addFeature" class="small-btn">新增特色</button></div><div id="featureEditor" class="list-editor"></div></div>
+          <div>
+            <div class="section-head"><div><h3>首頁報名資訊</h3><p class="section-subtitle">可管理「我想表演／我要認攤／我想參加活動」等按鈕區塊，並設定圖片、連結與隱藏。</p></div><button id="addRegistration" class="small-btn">新增報名項目</button></div>
+            <div class="row-2">
+              <label>報名區標題<input id="registrationTitleInput" class="input" /></label>
+              <label>報名區說明<input id="registrationSubtitleInput" class="input" /></label>
+            </div>
+            <div id="registrationEditor" class="list-editor"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-about" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">關於愛天使</h2><p class="section-subtitle">每張卡片都可設定文字、圖片、連結與隱藏。</p></div><button id="addAboutCard" class="small-btn">新增卡片</button></div>
+        <div id="aboutEditor" class="list-editor"></div>
+      </section>
+
+      <section id="panel-types" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">特教領域</h2><p class="section-subtitle">可新增不同特教類型介紹，並可附上圖片、連結與隱藏。</p></div><button id="addType" class="small-btn">新增領域</button></div>
+        <div id="typesEditor" class="list-editor"></div>
+      </section>
+
+      <section id="panel-news" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">最新消息</h2><p class="section-subtitle">首頁與最新消息頁共用資料，每則可放圖片、連結並可隱藏。</p></div><button id="addNews" class="small-btn">新增消息</button></div>
+        <div id="newsEditor" class="list-editor"></div>
+      </section>
+
+      <section id="panel-event" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">活動與攤位</h2><p class="section-subtitle">園遊會標題、說明、時程與攤位資料，皆可附圖、連結與隱藏。</p></div></div>
+        <div class="editor-grid">
+          <label>活動標題<input id="eventTitleInput" class="input" /></label>
+          <label>活動說明<textarea id="eventDescInput" class="input"></textarea></label>
+          <div><div class="section-head"><h3>活動時程</h3><button id="addSchedule" class="small-btn">新增時程</button></div><div id="scheduleEditor" class="list-editor"></div></div>
+          <div><div class="section-head"><h3>攤位資料</h3><button id="addBooth" class="small-btn">新增攤位</button></div><div id="boothEditor" class="list-editor"></div></div>
+        </div>
+      </section>
+
+      <section id="panel-sponsors" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">贊助夥伴</h2><p class="section-subtitle">合作企業、品牌與單位管理，可附圖、連結與隱藏。</p></div><button id="addSponsor" class="small-btn">新增贊助</button></div>
+        <div id="sponsorEditor" class="list-editor"></div>
+      </section>
+
+      <section id="panel-contact" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">聯絡資訊</h2><p class="section-subtitle">網站聯絡方式、聯絡頁圖片、連結與表單顯示設定。</p></div></div>
+        <div class="editor-grid">
+          <div class="row-2">
+            <label>Email<input id="contactEmailInput" class="input" /></label>
+            <label>電話<input id="contactPhoneInput" class="input" /></label>
+          </div>
+          <label>地址<input id="contactAddressInput" class="input" /></label>
+          <label>表單說明<textarea id="contactNoticeInput" class="input"></textarea></label>
+          <div class="row-2">
+            <label>聯絡頁圖片連結<input id="contactPanelLinkInput" class="input" /></label>
+            <label class="check-row"><input id="contactFormHiddenInput" type="checkbox" /> 隱藏聯絡表單</label>
+          </div>
+          <label>聯絡頁圖片路徑或 base64<input id="contactPanelImageInput" class="input" /></label>
+          <label>上傳聯絡頁圖片<input id="contactPanelImageFile" class="input" type="file" accept="image/*" /></label>
+          <div class="image-preview" id="contactPanelPreviewWrap" style="display:none"><img id="contactPanelPreview" src="" alt="聯絡頁圖片預覽"></div>
+        </div>
+      </section>
+
+      <section id="panel-system" class="admin-panel panel">
+        <div class="section-head"><div><h2 class="section-title">系統工具</h2><p class="section-subtitle">管理密碼與資料交接。</p></div></div>
+        <div class="editor-grid">
+          <label>後台密碼<input id="adminPasswordInput" class="input" type="text" /></label>
+          <div class="empty-note">已移除頁尾固定介紹文字，並新增各分頁內容項目的圖片／連結／隱藏設定。</div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="assets/default-data.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/admin.js"></script>
+</body>
+</html>
